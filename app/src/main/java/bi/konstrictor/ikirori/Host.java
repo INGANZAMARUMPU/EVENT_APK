@@ -3,6 +3,8 @@ package bi.konstrictor.ikirori;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONObject;
@@ -76,6 +78,27 @@ class Host {
                 }
             }
         });
+    }
+    public static Member extractUser(final Context activity, String token) {
+        String[] parts = token.split("\\.");
+
+        byte[] data = Base64.decode(parts[1], Base64.DEFAULT);
+        try {
+            String text = new String(data, "UTF-8");
+            Log.i("==== TOKEN ====", text);
+            JSONObject json_object = new JSONObject(text);
+            Member member = new Member(
+                    json_object.getString("user_id"),
+                    json_object.getString("username"),
+                    json_object.getString("phone"),
+                    json_object.getString("mobile"),
+                    json_object.getString("services")
+            );
+            return member;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
 

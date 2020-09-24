@@ -14,7 +14,7 @@
         android:visibility="gone"/>
 
     <LinearLayout
-        android:id="@+id/email_login_form"
+        android:id="@+id/login_form_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
