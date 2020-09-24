@@ -2,6 +2,7 @@ package bi.konstrictor.ikirori;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
@@ -26,43 +27,27 @@ import okhttp3.Response;
 
 class Host {
 //    public static final String URL = "https://api.rcretraining.com";
-    public static final String URL = "http://10.0.2.2:8000";
-//    public static final String URL = "http://192.168.8.101:8000";
+//    public static final String URL = "http://10.0.2.2:8000";
+    public static final String URL = "http://192.168.8.100:8000";
 
     public static void refreshToken(final Activity activity){
-
-        final SharedPreferences sharedPreferences = activity.getSharedPreferences("user_login", Context.MODE_PRIVATE);
-
+        logoutIfNoSession(activity);
+        final SharedPreferences sharedPreferences = activity.getSharedPreferences("user_session", Context.MODE_PRIVATE);
         String refresh = sharedPreferences.getString("refresh", "");
-        String token = sharedPreferences.getString("token", "");
-
-        if (refresh.isEmpty()) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(activity, "Log in first", Toast.LENGTH_SHORT).show();
-                }
-            });
-            return;
-        }
-
         String json = "{\"refresh\":\""+refresh+"\"}";
-        RequestBody body = RequestBody.create(
-                MediaType.parse("application/json; charset=utf-8"), json);
+        RequestBody body = RequestBody.create(json, MediaType.parse("application/json; charset=utf-8"));
 
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.URL+"/refresh/").newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(URL+"/refresh/").newBuilder();
 
         String url = urlBuilder.build().toString();
         Request request = new Request.Builder()
                 .url(url)
-                .post(body)
-                .build();
+                .post(body).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
             }
-
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String json = response.body().string();
@@ -99,6 +84,31 @@ class Host {
             e.printStackTrace();
             return null;
         }
+    }
+    public static void logout(Activity activity){
+        final SharedPreferences sharedPreferences = activity.getSharedPreferences("user_session", Context.MODE_PRIVATE);
+        sharedPreferences.edit().clear().commit();
+        Intent intent = new Intent(activity, LoginActivity.class);
+        activity.startActivity(intent);
+        activity.finish();
+    }
+    public static void logoutIfNoSession(Activity activity){
+        final SharedPreferences sharedPreferences = activity.getSharedPreferences("user_session", Context.MODE_PRIVATE);
+        String refresh = sharedPreferences.getString("refresh", "");
+        if (refresh.trim().isEmpty()) {
+            Toast.makeText(activity, "Log in first", Toast.LENGTH_SHORT).show();
+            logout(activity);
+        }
+    }
+
+    public static String getToken(Activity activity) {
+        final SharedPreferences sharedPreferences = activity.getSharedPreferences("user_session", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("token", "");
+        if (token.trim().isEmpty()) {
+            Toast.makeText(activity, "Log in first", Toast.LENGTH_SHORT).show();
+            logout(activity);
+        }
+        return token;
     }
 }
 

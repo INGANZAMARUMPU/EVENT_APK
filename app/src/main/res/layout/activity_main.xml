@@ -122,8 +122,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="30dp"
-            app:cardCornerRadius="10dp"
-            android:visibility="">
+            app:cardCornerRadius="10dp">
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -202,9 +201,15 @@
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="30dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="20dp"
         app:srcCompat="@drawable/ic_qr"
-        android:onClick="scanQr"/>
-
+        android:onClick="scanQr"
+        android:foregroundGravity="center"/>
+    <ProgressBar
+        android:id="@+id/progress_fetching_data"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 </RelativeLayout>
