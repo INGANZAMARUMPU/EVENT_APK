@@ -7,77 +7,131 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Servir"
-        android:textSize="16pt"
+        android:textSize="14pt"
         android:textColor="#333"
         android:textAlignment="center"/>
-    <TextView
-        android:id="@+id/lbl_service_fullname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nom Prenom"
-        android:textSize="12pt"/>
-    <TextView
-        android:id="@+id/lbl_service_solde"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="5000 Fbu"
-        android:textSize="10pt"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="produit"
-        android:textSize="9pt"/>
-    <Spinner
-        android:id="@+id/combo_service_products"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:backgroundTint="#aaa">
-    </Spinner>
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
-        <Button
-            android:id="@+id/btn_service_decrease"
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:text="-"
-            android:textSize="12pt"
-            android:padding="0dp"
-            android:layout_gravity="center"
-            android:background="@drawable/componant_button"/>
+        android:orientation="horizontal">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <TextView
-                android:id="@+id/lbl_guest_qtt"
-                android:layout_width="80dp"
-                android:layout_height="40dp"
-                android:text="0"
-                android:textSize="14pt"
-                android:padding="0dp"
-                android:textAlignment="center"/>
-            <TextView
-                android:id="@+id/lbl_guest_total"
-                android:layout_width="80dp"
-                android:layout_height="20dp"
-                android:text="10 000 Fbu"
-                android:textSize="6pt"
-                android:padding="0dp"
-                android:textAlignment="center"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Invité :"
+                    android:textSize="9pt"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Solde : "
+                    android:textSize="9pt"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="30dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="Produit : "
+                    android:textSize="9pt"/>
+            </LinearLayout>
+
         </LinearLayout>
-        <Button
-            android:id="@+id/btn_service_increase"
-            android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:text="+"
-            android:textSize="12pt"
-            android:padding="0dp"
-            android:layout_gravity="center"
-            android:background="@drawable/componant_button"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/lbl_service_fullname"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:text="Nom Prenom"
+                android:textSize="10pt"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/lbl_service_solde"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:text="5000 Fbu"
+                android:textSize="10pt"/>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/componant_button"
+                android:layout_margin="3dp">
+                <Spinner
+                    android:id="@+id/combo_service_products"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:backgroundTint="#aaa"/>
+            </FrameLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/componant_button"
+                android:padding="5dp">
+                <Button
+                    android:id="@+id/btn_service_decrease"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:text="-"
+                    android:textSize="12pt"
+                    android:padding="0dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/componant_button"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/lbl_guest_qtt"
+                        android:layout_width="80dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center_vertical"
+                        android:text="0"
+                        android:textSize="14pt"
+                        android:padding="0dp"
+                        android:textAlignment="center"/>
+                    <TextView
+                        android:id="@+id/lbl_guest_total"
+                        android:layout_width="80dp"
+                        android:layout_height="20dp"
+                        android:text="10 000 Fbu"
+                        android:textSize="6pt"
+                        android:padding="0dp"
+                        android:textAlignment="center"/>
+                </LinearLayout>
+                <Button
+                    android:id="@+id/btn_service_increase"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:text="+"
+                    android:textSize="12pt"
+                    android:padding="0dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/componant_button"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

@@ -4,10 +4,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Profile {
-    String fullname, avatar, phone, mobile, date, autres, qr;
+    String fullname, avatar, phone, mobile, date, autres, qr, id;
     Ticket ticket;
 
-    public Profile(String fullname, String avatar, String phone, String mobile, String date, String autres, String qr, JSONObject json_ticket) throws JSONException {
+    public Profile(String id, String fullname, String avatar, String phone, String mobile, String date, String autres, String qr, JSONObject json_ticket) throws JSONException {
+        this.id = id;
         this.fullname = fullname;
         this.avatar = avatar;
         this.phone = phone;

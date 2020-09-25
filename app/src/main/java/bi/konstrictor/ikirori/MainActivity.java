@@ -40,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
     ImageView img_guest_profile;
     ProgressBar progress_fetching_data;
     MainActivity activity;
-    private ArrayList<Product> products = null;
+    private ArrayList<Product> products = new ArrayList<>();
     private Profile profile;
+    private ArrayList<String> products_str = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,53 +70,6 @@ public class MainActivity extends AppCompatActivity {
         }
         activity = this;
     }
-
-    private void loadProducts(final boolean refreshed) {
-        OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.URL+"/api/product/").newBuilder();
-
-        String url = urlBuilder.build().toString();
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("Authorization", "Bearer " + Host.getToken(this))
-                .get().build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Toast.makeText(MainActivity.this, "Pas d'access réseau", Toast.LENGTH_SHORT).show();
-                progress_fetching_data.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String json = response.body().string();
-                try {
-                    JSONArray json_array = new JSONArray(json);
-                    Log.i("==== MAINACTIVITY ====", json);
-                    for (int i=0; i<json_array.length(); i++){
-                        JSONObject json_object = json_array.getJSONObject(i);
-                        Product product = new Product(
-                            json_object.getString("id"),
-                            json_object.getString("name"),
-                            json_object.getDouble("price")
-                        );
-                        products.add(product);
-                    }
-                } catch (Exception e) {
-                    if(!refreshed) loadProducts(true);
-                    final String message = e.getMessage();
-                    Log.i("==== MAINACTIVITY ====", e.getMessage());
-                    MainActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, "got incorrect products", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-            }
-        });
-    }
-
     @Override
     public boolean onCreateOptionsMenu( Menu menu) {
         getMenuInflater().inflate( R.menu.user_menu, menu);
@@ -132,6 +86,57 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void loadProducts(final boolean refreshed) {
+        OkHttpClient client = new OkHttpClient();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.URL+"/api/product/").newBuilder();
+
+        String url = urlBuilder.build().toString();
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", "Bearer " + Host.getToken(this))
+                .get().build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, "Pas d'access réseau", Toast.LENGTH_SHORT).show();
+                        progress_fetching_data.setVisibility(View.GONE);
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String json = response.body().string();
+                try {
+                    JSONArray json_array = new JSONArray(json);
+                    Log.i("==== MAINACTIVITY ====", json);
+                    for (int i=0; i<json_array.length(); i++){
+                        JSONObject json_object = json_array.getJSONObject(i);
+                        Product product = new Product(
+                                json_object.getString("id"),
+                                json_object.getString("name"),
+                                json_object.getDouble("price")
+                        );
+                        products.add(product);
+                        products_str.add(product.name);
+                    }
+                } catch (Exception e) {
+                    if(!refreshed) loadProducts(true);
+                    final String message = e.getMessage();
+                    Log.i("==== MAINACTIVITY ====", e.getMessage());
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "got incorrect products", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+        });
+    }
     public void scanQr(View view) {
         Host.logoutIfNoSession(this);
         IntentIntegrator integrator = new IntentIntegrator(this);
@@ -189,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
                     if (json_array.length()>0){
                         JSONObject json_object = json_array.getJSONObject(0);
                         final Profile profile = new Profile(
+                            json_object.getString("id"),
                             json_object.getString("fullname"),
                             json_object.getString("avatar"),
                             json_object.getString("phone"),
@@ -232,14 +238,14 @@ public class MainActivity extends AppCompatActivity {
         lbl_guest_phone.setText(profile.phone);
 
         String avatar = Host.URL+profile.avatar;
-        Log.i("==== AVATAR ====", avatar);
         Glide.with(this).load(avatar).into(img_guest_profile);
         progress_fetching_data.setVisibility(View.GONE);
     }
 
     public void openService(View view) {
-        if ((products!=null)&(profile!=null)){
-            ServicesForm servicesForm = new ServicesForm(this, profile, products);
+        System.out.println("====================="+ products.size()+profile);
+        if ((products.size()>0)&(profile!=null)){
+            ServicesForm servicesForm = new ServicesForm(this, profile, products, products_str);
             servicesForm.show();
         }
     }
