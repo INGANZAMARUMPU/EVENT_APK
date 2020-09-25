@@ -32,11 +32,14 @@ public class Member {
             JSONArray json_services = new JSONArray(this.services);
             List<String> services = new ArrayList<String>();
             for (int i = 0; i < json_services.length(); i++) {
-                services.add(json_services.getString(i));
+                services.add(json_services.getString(i).toLowerCase());
             }
             return services;
         } catch (Exception e){
             return null;
         }
+    }
+    public boolean hasService(String services){
+        return getServices().contains(services.toLowerCase());
     }
 }
