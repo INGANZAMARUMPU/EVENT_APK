@@ -7,16 +7,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -69,10 +66,10 @@ public class ServicesForm extends Dialog {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.URL+"/api/consommation/").newBuilder();
         String json =
             "{" +
-                    "\"quantity\":\""+ quantity +"\", " +
-                    "\"product\":\""+ selected_product.id+
-                    "\"profile\":\""+ profile.id+
-            "\"}";
+                    "\"quantity\":"+ quantity +", " +
+                    "\"product\":"+ selected_product.id+", " +
+                    "\"profile\":"+ profile.id +
+            "}";
         RequestBody body = RequestBody.create(json,
                 MediaType.parse("application/json; charset=utf-8"));
 
@@ -81,6 +78,7 @@ public class ServicesForm extends Dialog {
                 .url(url)
                 .addHeader("Authorization", "Bearer " + Host.getToken(activity))
                 .post(body).build();
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -97,11 +95,13 @@ public class ServicesForm extends Dialog {
                 String json = response.body().string();
                 try {
                     JSONObject json_object = new JSONObject(json);
-                    Double total = json_object.getDouble("total");
+                    final Double total = json_object.getDouble("total");
                     if (total>0){
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                profile.ticket.consommable-=total;
+                                activity.chargerProfile(profile);
                                 Toast.makeText(activity, "operation éffectuée", Toast.LENGTH_LONG).show();
                             }
                         });
@@ -117,7 +117,8 @@ public class ServicesForm extends Dialog {
                 } catch (Exception e) {
                     if(!refreshed) submit(true);
                     final String message = e.getMessage();
-                    Log.i("==== SERVICE FORM ====", e.getMessage());
+                    Log.i("==== DIALOG JSON ====", json);
+                    Log.i("==== DIALOG ERR ====", e.getMessage());
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -162,7 +163,7 @@ public class ServicesForm extends Dialog {
                 setQuantity(quantity-1);
             }
         });
-        btn_service_cancel.setOnClickListener(new View.OnClickListener() {
+        btn_service_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 submit(false);

@@ -20,7 +20,7 @@ public class Profile {
                 json_ticket.getString("id"),
                 json_ticket.getString("name"),
                 json_ticket.getString("autres"),
-                json_ticket.getDouble("somme"),
+                json_ticket.getDouble("price"),
                 json_ticket.getDouble("consommable")
         );
     }

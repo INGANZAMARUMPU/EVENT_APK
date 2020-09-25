@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
                 String json = response.body().string();
                 try {
                     JSONArray json_array = new JSONArray(json);
-                    Log.i("==== MAINACTIVITY ====", json);
                     for (int i=0; i<json_array.length(); i++){
                         JSONObject json_object = json_array.getJSONObject(i);
                         Product product = new Product(
@@ -126,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     if(!refreshed) loadProducts(true);
                     final String message = e.getMessage();
-                    Log.i("==== MAINACTIVITY ====", e.getMessage());
+                    Log.i("==== MAIN ACT JSON ====", json);
+                    Log.i("==== MAIN ACT ERR ====", e.getMessage());
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -190,7 +190,6 @@ public class MainActivity extends AppCompatActivity {
                 String json = response.body().string();
                 try {
                     JSONArray json_array = new JSONArray(json);
-                    Log.i("==== MAINACTIVITY ====", json);
                     if (json_array.length()>0){
                         JSONObject json_object = json_array.getJSONObject(0);
                         final Profile profile = new Profile(
@@ -214,7 +213,8 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     if(!refreshed) setUserQR(qr_data, true);
                     final String message = e.getMessage();
-                    Log.i("==== MAINACTIVITY ====", e.getMessage());
+                    Log.i("==== MAIN ACT JSON ====", json);
+                    Log.i("==== MAIN ACT ERR ====", e.getMessage());
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void chargerProfile(Profile profile) {
+    public void chargerProfile(Profile profile) {
         this.profile = profile;
         lbl_guest_place.setText(profile.ticket.id);
         lbl_guest_type.setText(profile.ticket.name);
@@ -243,7 +243,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openService(View view) {
-        System.out.println("====================="+ products.size()+profile);
         if ((products.size()>0)&(profile!=null)){
             ServicesForm servicesForm = new ServicesForm(this, profile, products, products_str);
             servicesForm.show();

@@ -80,7 +80,6 @@ public class LoginActivity extends AppCompatActivity {
                 String json = response.body().string();
                 try {
                     JSONObject jsonObject = new  JSONObject(json);
-                    Log.i("==== LOGIN ====", json);
                     String token = jsonObject.getString("access");
                     String refresh = jsonObject.getString("refresh");
                     SharedPreferences.Editor session = sessionPreference.edit();
@@ -97,7 +96,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 } catch (Exception e) {
                     final String message = e.getMessage();
-                    Log.i("==== LOGIN ====", e.getMessage());
+                    Log.i("==== LOGIN RESPONS ====", json);
+                    Log.i("==== LOGIN MESSAGE ====", e.getMessage());
                     LoginActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
