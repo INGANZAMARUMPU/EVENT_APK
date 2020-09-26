@@ -75,7 +75,8 @@
                 android:layout_height="30dp"
                 android:layout_gravity="center_vertical"
                 android:background="@drawable/componant_button"
-                android:layout_margin="3dp">
+                android:layout_margin="3dp"
+                android:padding="0dp">
                 <Spinner
                     android:id="@+id/combo_service_products"
                     android:layout_width="wrap_content"

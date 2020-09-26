@@ -63,7 +63,7 @@ public class ServicesForm extends Dialog {
     }
     private void submit(final boolean refreshed) {
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.URL+"/api/consommation/").newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.getURL(activity)+"/api/consommation/").newBuilder();
         String json =
             "{" +
                     "\"quantity\":"+ quantity +", " +
@@ -76,7 +76,8 @@ public class ServicesForm extends Dialog {
         String url = urlBuilder.build().toString();
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "Bearer " + Host.getToken(activity))
+                .addHeader("Authorization", "Bearer " +
+                        Host.getSessionValue(activity, "user_session","token"))
                 .post(body).build();
 
         client.newCall(request).enqueue(new Callback() {

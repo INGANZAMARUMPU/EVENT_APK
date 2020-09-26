@@ -26,10 +26,6 @@ import okhttp3.Response;
  */
 
 class Host {
-//    public static final String URL = "https://api.rcretraining.com";
-//    public static final String URL = "http://10.0.2.2:8000";
-    public static final String URL = "http://192.168.8.100:8000";
-
     public static void refreshToken(final Activity activity){
         logoutIfNoSession(activity);
         final SharedPreferences sharedPreferences = activity.getSharedPreferences("user_session", Context.MODE_PRIVATE);
@@ -38,7 +34,7 @@ class Host {
         RequestBody body = RequestBody.create(json, MediaType.parse("application/json; charset=utf-8"));
 
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(URL+"/refresh/").newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(getURL(activity)+"/refresh/").newBuilder();
 
         String url = urlBuilder.build().toString();
         Request request = new Request.Builder()
@@ -64,13 +60,18 @@ class Host {
             }
         });
     }
+
+    public static String getURL(Activity activity) {
+        Log.i("==== HOST URL ====", getSessionValue(activity, "login_session", "ip"));
+        return getSessionValue(activity, "login_session", "ip");
+    }
+
     public static Member extractUser(final Context activity, String token) {
         String[] parts = token.split("\\.");
 
         byte[] data = Base64.decode(parts[1], Base64.DEFAULT);
         try {
             String text = new String(data, "UTF-8");
-            Log.i("==== TOKEN ====", text);
             JSONObject json_object = new JSONObject(text);
             Member member = new Member(
                     json_object.getString("user_id"),
@@ -101,14 +102,10 @@ class Host {
         }
     }
 
-    public static String getToken(Activity activity) {
-        final SharedPreferences sharedPreferences = activity.getSharedPreferences("user_session", Context.MODE_PRIVATE);
-        String token = sharedPreferences.getString("token", "");
-        if (token.trim().isEmpty()) {
-            Toast.makeText(activity, "Log in first", Toast.LENGTH_SHORT).show();
-            logout(activity);
-        }
-        return token;
+    public static String getSessionValue(Activity activity, String session, String key) {
+        final SharedPreferences sharedPreferences = activity.getSharedPreferences(session, Context.MODE_PRIVATE);
+        String value = sharedPreferences.getString(key, "");
+        return value;
     }
 }
 

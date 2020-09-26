@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
-    android:padding="20dp">
+    android:padding="20dp"
+    tools:context=".LoginActivity">
+
     <ProgressBar
         android:id="@+id/progress_login"
         android:layout_width="wrap_content"
@@ -17,24 +18,21 @@
         android:id="@+id/login_form_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"
         android:orientation="vertical">
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <EditText
                 android:id="@+id/field_login_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_user_p"
                 android:hint="@string/username"
                 android:inputType="text"
                 android:maxLines="1"
-                android:singleLine="true"
-                android:drawableEnd="@drawable/ic_user_p" />
-
+                android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -45,12 +43,25 @@
                 android:id="@+id/field_login_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_key_a"
                 android:hint="@string/mdp"
                 android:imeOptions="actionUnspecified"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:singleLine="true"
-                android:drawableEnd="@drawable/ic_key_a" />
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/field_login_ip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_server_address"
+                android:hint="Adresse du serveur"
+                android:inputType="text"
+                android:maxLines="1"
+                android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
         <RelativeLayout
             android:layout_width="match_parent"
@@ -61,12 +72,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
                 android:layout_alignParentEnd="true"
-                android:textAllCaps="false"
-                android:text="@string/login"
-                android:background="@drawable/material_button"
-                android:textColor="#fff"
                 android:layout_marginEnd="10dp"
-                android:onClick="nextActivity"/>
+                android:background="@drawable/material_button"
+                android:onClick="nextActivity"
+                android:text="@string/login"
+                android:textAllCaps="false"
+                android:textColor="#fff"/>
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

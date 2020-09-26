@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Product> products = new ArrayList<>();
     private Profile profile;
     private ArrayList<String> products_str = new ArrayList<>();
+    private Member user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +61,17 @@ public class MainActivity extends AppCompatActivity {
         lbl_guest_others = findViewById(R.id.lbl_guest_others);
         lbl_guest_inscr_date = findViewById(R.id.lbl_guest_inscr_date);
         lbl_guest_phone = findViewById(R.id.lbl_guest_phone);
-
         img_guest_profile = findViewById(R.id.img_guest_profile);
-
         progress_fetching_data = findViewById(R.id.progress_fetching_data);
 
-        if(Host.extractUser(this, Host.getToken(this)).hasService("service")){
+        user = Host.extractUser(this, Host.getSessionValue(this, "user_session", "token"));
+
+        if(user.hasService("service")){
             loadProducts(false);
         }
         activity = this;
     }
+
     @Override
     public boolean onCreateOptionsMenu( Menu menu) {
         getMenuInflater().inflate( R.menu.user_menu, menu);
@@ -88,12 +90,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadProducts(final boolean refreshed) {
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.URL+"/api/product/").newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.getURL(this)+"/api/product/").newBuilder();
 
         String url = urlBuilder.build().toString();
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "Bearer " + Host.getToken(this))
+                .addHeader("Authorization", "Bearer " +
+                        Host.getSessionValue(this, "user_session","token"))
                 .get().build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -166,12 +169,13 @@ public class MainActivity extends AppCompatActivity {
         progress_fetching_data.setVisibility(View.VISIBLE);
 
         OkHttpClient client = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.URL+"/api/profile/scanqr/"+qr_data+"/").newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.getURL(this)+"/api/profile/scanqr/"+qr_data+"/").newBuilder();
 
         String url = urlBuilder.build().toString();
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "Bearer " + Host.getToken(this))
+                .addHeader("Authorization", "Bearer " +
+                        Host.getSessionValue(this, "user_session","token"))
                 .get().build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -237,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
         lbl_guest_inscr_date.setText(profile.date);
         lbl_guest_phone.setText(profile.phone);
 
-        String avatar = Host.URL+profile.avatar;
+        String avatar = Host.getURL(this)+profile.avatar;
         Glide.with(this).load(avatar).into(img_guest_profile);
         progress_fetching_data.setVisibility(View.GONE);
     }
