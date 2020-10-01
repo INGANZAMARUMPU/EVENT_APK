@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Menu menu;
     TextView lbl_guest_place, lbl_guest_type, lbl_guest_solde, lbl_guest_fullname,
-            lbl_guest_others,lbl_guest_inscr_date, lbl_guest_phone;
+            lbl_guest_others,lbl_guest_inscr_date, lbl_guest_phone, lbl_guest_email;
     ImageView img_guest_profile;
     ProgressBar progress_fetching_data;
     MainActivity activity;
@@ -60,14 +60,15 @@ public class MainActivity extends AppCompatActivity {
         lbl_guest_fullname = findViewById(R.id.lbl_guest_fullname);
         lbl_guest_others = findViewById(R.id.lbl_guest_others);
         lbl_guest_inscr_date = findViewById(R.id.lbl_guest_inscr_date);
+        lbl_guest_email = findViewById(R.id.lbl_guest_email);
         lbl_guest_phone = findViewById(R.id.lbl_guest_phone);
         img_guest_profile = findViewById(R.id.img_guest_profile);
         progress_fetching_data = findViewById(R.id.progress_fetching_data);
 
-        user = Host.extractUser(this, Host.getSessionValue(this, "user_session", "token"));
+        user = Host.extractUser(Host.getSessionValue(this, "user_session", "token"));
 
         if(user.hasService("service")){
-            loadProducts(false);
+            loadProducts();
         }
         activity = this;
     }
@@ -88,15 +89,15 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadProducts(final boolean refreshed) {
+    private void loadProducts() {
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.getURL(this)+"/api/product/").newBuilder();
 
         String url = urlBuilder.build().toString();
+        final String token = Host.getSessionValue(this, "user_session","token");
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "Bearer " +
-                        Host.getSessionValue(this, "user_session","token"))
+                .addHeader("Authorization", "Bearer " + token)
                 .get().build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -126,7 +127,14 @@ public class MainActivity extends AppCompatActivity {
                         products_str.add(product.name);
                     }
                 } catch (Exception e) {
-                    if(!refreshed) loadProducts(true);
+                    try {
+                        if(Host.tokenExpired(token)){
+                            Host.refreshToken(MainActivity.this);
+                            loadProducts();
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                     final String message = e.getMessage();
                     Log.i("==== MAIN ACT JSON ====", json);
                     Log.i("==== MAIN ACT ERR ====", e.getMessage());
@@ -158,24 +166,24 @@ public class MainActivity extends AppCompatActivity {
             if(result.getContents()==null){
                 Toast.makeText(this, "you cancelled the scan", Toast.LENGTH_LONG).show();
             } else {
-                setUserQR(result.getContents(), false);
+                setUserQR(result.getContents());
                 Toast.makeText(this, "fetching guest data...", Toast.LENGTH_SHORT).show();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void setUserQR(final String qr_data, final boolean refreshed) {
+    private void setUserQR(final String qr_data) {
         progress_fetching_data.setVisibility(View.VISIBLE);
 
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.getURL(this)+"/api/profile/scanqr/"+qr_data+"/").newBuilder();
 
         String url = urlBuilder.build().toString();
+        final String token = Host.getSessionValue(this, "user_session","token");
         Request request = new Request.Builder()
                 .url(url)
-                .addHeader("Authorization", "Bearer " +
-                        Host.getSessionValue(this, "user_session","token"))
+                .addHeader("Authorization", "Bearer " + token)
                 .get().build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -201,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                             json_object.getString("fullname"),
                             json_object.getString("avatar"),
                             json_object.getString("phone"),
-                            json_object.getString("mobile"),
+                            json_object.getString("email"),
                             json_object.getString("date"),
                             json_object.getString("autres"),
                             json_object.getString("qr"),
@@ -215,7 +223,19 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                 } catch (Exception e) {
-                    if(!refreshed) setUserQR(qr_data, true);
+                    try {
+                        if(Host.tokenExpired(token)){
+                            Host.refreshToken(MainActivity.this);
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    setUserQR(qr_data);
+                                }
+                            });
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                     final String message = e.getMessage();
                     Log.i("==== MAIN ACT JSON ====", json);
                     Log.i("==== MAIN ACT ERR ====", e.getMessage());
@@ -239,6 +259,7 @@ public class MainActivity extends AppCompatActivity {
         lbl_guest_fullname.setText(profile.fullname);
         lbl_guest_others.setText(profile.autres);
         lbl_guest_inscr_date.setText(profile.date);
+        lbl_guest_email.setText(profile.email);
         lbl_guest_phone.setText(profile.phone);
 
         String avatar = Host.getURL(this)+profile.avatar;

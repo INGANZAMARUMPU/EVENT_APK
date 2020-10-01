@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Member {
-    public String id, username, phone, mobile, services;
+    public String id, username, phone, email, services;
 
-    public Member(String id, String username, String phone, String mobile, String services) {
+    public Member(String id, String username, String phone, String email, String services) {
         this.id = id;
         this.username = username;
         this.phone = phone;
-        this.mobile = mobile;
+        this.email = email;
         this.services = services;
     }
 
@@ -22,7 +22,7 @@ public class Member {
                 "id='" + id + '\'' +
                 ", username='" + username + '\'' +
                 ", phone='" + phone + '\'' +
-                ", mobile='" + mobile + '\'' +
+                ", email='" + email + '\'' +
                 ", services=" + services +
                 '}';
     }

@@ -11,6 +11,8 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -66,18 +68,18 @@ class Host {
         return getSessionValue(activity, "login_session", "ip");
     }
 
-    public static Member extractUser(final Context activity, String token) {
+    public static Member extractUser(String token) {
         String[] parts = token.split("\\.");
 
         byte[] data = Base64.decode(parts[1], Base64.DEFAULT);
         try {
             String text = new String(data, "UTF-8");
-            JSONObject json_object = new JSONObject(text);
+            CustomJson json_object = new CustomJson(text);
             Member member = new Member(
                     json_object.getString("user_id"),
                     json_object.getString("username"),
                     json_object.getString("phone"),
-                    json_object.getString("mobile"),
+                    json_object.getString("email"),
                     json_object.getString("services")
             );
             return member;
@@ -106,6 +108,17 @@ class Host {
         final SharedPreferences sharedPreferences = activity.getSharedPreferences(session, Context.MODE_PRIVATE);
         String value = sharedPreferences.getString(key, "");
         return value;
+    }
+
+    public static boolean tokenExpired(String token) throws Exception {
+        String[] parts = token.split("\\.");
+        byte[] data = Base64.decode(parts[1], Base64.DEFAULT);
+        String text = new String(data, "UTF-8");
+        CustomJson json_object = new CustomJson(text);
+        long right_now = new Date().getTime();
+        long date = json_object.getLong("exp");
+        Log.i("===== EXPIRATION =====", Long.toString(right_now)+ " "+Long.toString(date));
+        return new Date().getTime() > date;
     }
 }
 

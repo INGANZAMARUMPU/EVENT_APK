@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(!token.trim().isEmpty() & !refresh.trim().isEmpty()){
             Intent intent = new Intent(this, MainActivity.class);
-            if(Host.extractUser(this, token)!=null) startActivity(intent);
+            if(Host.extractUser(token)!=null) startActivity(intent);
         }else{
             populateFields();
         }
@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences loginPreference = getSharedPreferences("login_session", MODE_PRIVATE);
                             SharedPreferences.Editor login = loginPreference.edit();
                             login.putString("ip", host_url);
-                            login.putString("username", Host.extractUser(LoginActivity.this, token).username);
+                            login.putString("username", Host.extractUser(token).username);
                             login.commit();
 
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
